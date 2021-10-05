@@ -41,6 +41,7 @@ flags.DEFINE_boolean('count', False, 'count objects being tracked on screen')
 import socket
 import time
 
+# 서버 주소 설정
 HOST = '192.168.0.114'
 PORT = 6666
 
