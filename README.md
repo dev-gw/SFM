@@ -1,5 +1,6 @@
 # Shop-floor-Monitoring
 
 
-https://user-images.githubusercontent.com/78286605/138110974-638f6826-279d-4154-9e11-7fa53e292d38.mp4
 
+
+![stable](https://user-images.githubusercontent.com/78286605/138114240-bd7a6440-f9b3-49cd-a2d7-e30cd0b7edec.gif)
