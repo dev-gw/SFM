@@ -11,6 +11,8 @@ Cloning [Yolov4-DeepSort repository](https://github.com/theAIGuysCode/yolov4-dee
 Move 'Object_tracker_SF.py' file into YoloV4-deepsort repository file.
 
 Install the proper dependencies in repository path via Anaconda.   
+I recommend using GPU for real time.
+
 
 **Conda**   
 ```
@@ -38,6 +40,6 @@ python save_model.py --model yolov4
 # Run yolov4 deep sort object tracker on camera (set video flag to 1)
 python object_tracker_SF.py --video 1 --model yolov4
 ```  
---video flag number can be differ.
+--video flag number can be differ.   
 It will be helpful if you refer to Yolov4-Deepsort repository's README.
 
