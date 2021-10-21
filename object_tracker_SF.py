@@ -41,6 +41,7 @@ flags.DEFINE_boolean('count', False, 'count objects being tracked on screen')
 import socket
 import time
 
+# 서버 주소 설정
 HOST = '192.168.0.114'
 PORT = 6666
 
@@ -87,6 +88,7 @@ def main(_argv):
 
     out = None
 
+    # 비디오 해상도 설정
     vid.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
     vid.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
@@ -99,10 +101,10 @@ def main(_argv):
         codec = cv2.VideoWriter_fourcc(*FLAGS.output_format)
         out = cv2.VideoWriter(FLAGS.output, codec, fps, (width, height))
 
-    #start line
+    # start line
     start1 = (1713,385)
     start2 = (1813,385)
-    #end line
+    # end line
     end1 = (915,800)
     end2 = (915,900)
 
@@ -121,10 +123,7 @@ def main(_argv):
     # WIP list
     wiplist = []
 
-    # Done list
-    #donelist = []
-
-    # counting
+    # 지표 변수 선언
     global in_count, out_count, warning1, warning2, th, basket_in, basket_out, soccer_in, soccer_out
     in_count = 0
     out_count = 0
@@ -153,6 +152,7 @@ def main(_argv):
             break
         frame_num +=1
         print('Frame #: ', frame_num)
+        ## 로그 출력할 때
         # with open('Tracker_log.txt', 'a') as f:
         #     f.write('Frame : {}'.format(frame_num)+"\n")
         frame_size = frame.shape[:2]
@@ -233,11 +233,10 @@ def main(_argv):
             else:
                 names.append(class_name)
         names = np.array(names)
+        # WIP 공별 구분
         basketball_count = len(np.array(basketball))
         soccerball_count = len(np.array(soccerball))
         count = len(names)
-
-        # wip seperate
 
         if FLAGS.count:
             cv2.putText(frame, "Objects being tracked: {}".format(count), (5, 35), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
@@ -261,16 +260,10 @@ def main(_argv):
         tracker.predict()
         tracker.update(detections)
 
-        # draw start
+        # draw start line
         cv2.line(frame,start1,start2,(0,255,0),3)
-        # draw end
+        # draw end line
         cv2.line(frame,end1,end2,(0,255,0),3)
-
-        # draw danger zone
-        #cv2.rectangle(frame, (1235, 505), (1355, 615), (0, 255, 0), 3)
-        #cv2.putText(frame, "Danger",  (1240, 635) ,cv2.FONT_HERSHEY_COMPLEX_SMALL,1.3,(0,255,0),2)
-        #cv2.rectangle(frame, (1260, 810), (1380, 920), (0,255,0), 3)
-        #cv2.putText(frame, "Danger", (1265, 940), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1.3, (0, 255, 0), 2)
 
         # update tracks
         for track in tracker.tracks:
@@ -280,6 +273,7 @@ def main(_argv):
             class_name = track.get_class()
             
         # draw bbox on screen
+            # 공에 따라 색깔 구분
             if class_name == "B":
                 color = (97,237,124)
             else:
@@ -288,10 +282,11 @@ def main(_argv):
             cv2.rectangle(frame, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), color, 2)
             cv2.rectangle(frame, (int(bbox[0]), int(bbox[1]-30)), (int(bbox[0])+(len(class_name)+len(str(track.track_id)))*21, int(bbox[1])), color, -1)
             cv2.putText(frame, class_name + "-" + str(track.track_id),(int(bbox[0]), int(bbox[1]-10)),0, 0.70, (255,255,255),2)
+            # 공의 중심 계산
             center_x = int((int(bbox[0]) + int(bbox[2])) / 2)
             center_y = int((int(bbox[1]) + int(bbox[3])) / 2)
 
-            # 시작범위부터 추적(범위설정필요)
+            # 중심좌표로 start line부터 추적
             if (start1[0] <= center_x <= start2[0]) and (start1[1] - 3 <= center_y <= start2[1] + 3):
                 if (class_name + "-" + str(track.track_id)) not in wiplist:
                     wiplist.append(class_name + "-" + str(track.track_id))
@@ -304,7 +299,7 @@ def main(_argv):
                     in_count += 1
 
 
-            # check
+            # end line 추적
 
             if (end1[0] - 7 <= center_x <= end1[0] + 5) and (end1[1] <= center_y <= end2[1]):
                 if (class_name + "-" + str(track.track_id)) in wiplist:
@@ -344,7 +339,7 @@ def main(_argv):
                 soccer_cycletime = round((sum(soccer_cyclelist) / len(soccer_cyclelist)), 3)
 
 
-            # error zone
+            # error zone 1
             if (1235 < center_x < 1355) and (505 < center_y < 615):
                 cv2.rectangle(frame, (1235, 505), (1355, 615), (255, 0, 0), 3)
                 cv2.putText(frame, "ERROR", (1240, 635), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1.3, (255, 0, 0), 2)
@@ -352,7 +347,7 @@ def main(_argv):
             else:
                 warning1 = 0
 
-            # Danger zone 2
+            # error zone 2
             if (1260 < center_x < 1380) and (810 < center_y < 920):
                 cv2.rectangle(frame, (1260, 810), (1380, 920), (255,0,0), 3)
                 cv2.putText(frame, "ERROR", (1265, 940), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1.3, (255,0,0), 2)
@@ -361,33 +356,29 @@ def main(_argv):
                 warning2 = 0
 
 
-
-
-            # if enable info flag then print details about each track
-            #if FLAGS.info:
-                #print("Tracker ID: {}, Class: {},  BBox Coords (xmin, ymin, xmax, ymax): {}".format(str(track.track_id), class_name, (int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3]))))
-            # # Write txt file
+            # # Write txt file(로그 출력)
             # with open('Tracker_log.txt', 'a') as f:
             #     f.write("Tracker ID: {}, {}".format(str(track.track_id), (int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3])))+"\n")
 
-        #s지표 그리기(테스트)
-        # cv2.putText(frame, "Cycletime: Total {} (sec)".format(total_cycletime),(20, 60), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
-        # cv2.putText(frame, "B: Cycletime: {} (sec)".format(basket_cycletime), (150, 100), cv2.FONT_HERSHEY_COMPLEX_SMALL,2, (0, 255, 0), 2)
-        # cv2.putText(frame, "S: Cycletime: {} (sec)".format(soccer_cycletime), (150, 140),cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
-        # cv2.putText(frame, "WIP: Total {} (ea)".format(count), (25, 210), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
-        # cv2.putText(frame, "B: {} (ea)".format(basketball_count), (147,250), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0,255,0), 2)
-        # cv2.putText(frame, "S: {} (ea)".format(soccerball_count), (147, 290), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
-        # cv2.putText(frame, "IN:  Total {} (ea)".format(in_count), (25, 360), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
-        # cv2.putText(frame, "B: {} (ea)".format(basket_in), (142, 400), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
-        # cv2.putText(frame, "S: {} (ea)".format(soccer_in), (142, 440), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0),2)
-        # cv2.putText(frame, "OUT: Total {} (ea)".format(out_count), (16, 510), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
-        # cv2.putText(frame, "B: {} (ea)".format(basket_out), (150, 550), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0),2)
-        # cv2.putText(frame, "S: {} (ea)".format(soccer_out), (150, 590), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0),2)
+        #지표 그리기(테스트)
+        cv2.putText(frame, "Cycletime: Total {} (sec)".format(total_cycletime),(20, 60), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
+        cv2.putText(frame, "B: Cycletime: {} (sec)".format(basket_cycletime), (150, 100), cv2.FONT_HERSHEY_COMPLEX_SMALL,2, (0, 255, 0), 2)
+        cv2.putText(frame, "S: Cycletime: {} (sec)".format(soccer_cycletime), (150, 140),cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
+        cv2.putText(frame, "WIP: Total {} (ea)".format(count), (25, 210), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
+        cv2.putText(frame, "B: {} (ea)".format(basketball_count), (147,250), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0,255,0), 2)
+        cv2.putText(frame, "S: {} (ea)".format(soccerball_count), (147, 290), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
+        cv2.putText(frame, "IN:  Total {} (ea)".format(in_count), (25, 360), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
+        cv2.putText(frame, "B: {} (ea)".format(basket_in), (142, 400), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
+        cv2.putText(frame, "S: {} (ea)".format(soccer_in), (142, 440), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0),2)
+        cv2.putText(frame, "OUT: Total {} (ea)".format(out_count), (16, 510), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
+        cv2.putText(frame, "B: {} (ea)".format(basket_out), (150, 550), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0),2)
+        cv2.putText(frame, "S: {} (ea)".format(soccer_out), (150, 590), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0),2)
 
 
 
        # send message to server
-        #message = "{} {} {} {} ".format(in_count, out_count, total_cycletime, count)
+        #message = "{} {} {} {} ".format(in_count, out_count, total_cycletime, count) # 공 구분하지 않을 때
+
         message = "{} {} {} {} {} {} {} {} {} {} {} {} {} {} ".format(in_count, out_count, total_cycletime, count, warning1, warning2, basket_in, basket_out, basket_cycletime, basketball_count,soccer_in, soccer_out, soccer_cycletime, soccerball_count)
 
         client_socket.send(message.encode())
