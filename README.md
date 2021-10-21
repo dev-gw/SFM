@@ -24,9 +24,20 @@ conda activate yolov4-gpu
 pip install -r requirements-gpu.txt
 ```   
 
-### Step 3
-Downloading Pre-trained Weights(Custom Object)   
+## Downloading Pre-trained Weights(Custom object)
 링크 삽입하기   
 Copy and paste yolov4.weights from your downloads folder into the 'data' folder of Yolov4 repository.
 
+## Running the Tracker with YOLOv4-DeepSort
+First, convert .weights into TensorFlow model.   
+Then run the object_tracker_SF.py using camera.   
+```
+# Convert darknet weights to tensorflow model
+python save_model.py --model yolov4 
+
+# Run yolov4 deep sort object tracker on camera (set video flag to 1)
+python object_tracker_SF.py --video 1 --model yolov4
+```  
+--video flag number can be differ.
+It will be helpful if you refer to Yolov4-Deepsort repository's README.
 
