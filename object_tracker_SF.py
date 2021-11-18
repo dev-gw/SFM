@@ -250,9 +250,6 @@ def main(_argv):
         soccerball_count = len(np.array(soccerball))
         count = len(names)
 
-        if FLAGS.count:
-            cv2.putText(frame, "Objects being tracked: {}".format(count), (5, 35), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
-            print("Objects being tracked: {}".format(count))
         # delete detections that are not in allowed_classes
         bboxes = np.delete(bboxes, deleted_indx, axis=0)
         scores = np.delete(scores, deleted_indx, axis=0)
@@ -373,12 +370,7 @@ def main(_argv):
             else:
                 warning2 = 0
 
-
-            # # Write txt file(로그 출력)
-            # with open('Tracker_log.txt', 'a') as f:
-            #     f.write("Tracker ID: {}, {}".format(str(track.track_id), (int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3])))+"\n")
-
-        #지표 그리기(테스트)
+        #지표 그리기
         cv2.putText(frame, "Cycletime: Total {} (sec)".format(total_cycletime),(20, 60), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
         cv2.putText(frame, "B: Cycletime: {} (sec)".format(basket_cycletime), (150, 100), cv2.FONT_HERSHEY_COMPLEX_SMALL,2, (0, 255, 0), 2)
         cv2.putText(frame, "S: Cycletime: {} (sec)".format(soccer_cycletime), (150, 140),cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
