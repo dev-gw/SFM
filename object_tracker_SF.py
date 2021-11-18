@@ -18,6 +18,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
+from datetime import datetime
+import pymysql.cursors
 # deep sort imports
 from deep_sort import preprocessing, nn_matching
 from deep_sort.detection import Detection
@@ -42,8 +44,18 @@ import socket
 import time
 
 # 서버 주소 설정
-HOST = '192.168.0.114'
-PORT = 6666
+# HOST = '192.168.0.114'
+# PORT = 6666
+
+# 데이터베이스 설정
+conn = pymysql.connect(
+    host = 'localhost',
+    user = 'root',
+    passwd = 'smartlab',
+    db = 'shop_floor',
+    charset='utf8'
+)
+cursor = conn.cursor()
 
 def main(_argv):
     # Definition of the parameters
@@ -286,6 +298,12 @@ def main(_argv):
             center_x = int((int(bbox[0]) + int(bbox[2])) / 2)
             center_y = int((int(bbox[1]) + int(bbox[3])) / 2)
 
+            # DB insert
+            tnow = datetime.today().strftime("%Y%m%d%H%M%S")
+            sql = "insert into ball(ID,x_coordinate,y_coordinate,frame,Date) values({0},{1},{2},{3},{4});".format(track.track_id, center_x, center_y, frame_num, tnow)
+            cursor.execute(sql)
+            conn.commit()
+
             # 중심좌표로 start line부터 추적
             if (start1[0] <= center_x <= start2[0]) and (start1[1] - 3 <= center_y <= start2[1] + 3):
                 if (class_name + "-" + str(track.track_id)) not in wiplist:
@@ -379,9 +397,9 @@ def main(_argv):
        # send message to server
         #message = "{} {} {} {} ".format(in_count, out_count, total_cycletime, count) # 공 구분하지 않을 때
 
-        message = "{} {} {} {} {} {} {} {} {} {} {} {} {} {} ".format(in_count, out_count, total_cycletime, count, warning1, warning2, basket_in, basket_out, basket_cycletime, basketball_count,soccer_in, soccer_out, soccer_cycletime, soccerball_count)
+        #message = "{} {} {} {} {} {} {} {} {} {} {} {} {} {} ".format(in_count, out_count, total_cycletime, count, warning1, warning2, basket_in, basket_out, basket_cycletime, basketball_count,soccer_in, soccer_out, soccer_cycletime, soccerball_count)
 
-        client_socket.send(message.encode())
+        #client_socket.send(message.encode())
 
         # calculate frames per second of running detections
         fps = 1.0 / (time.time() - start_time)
