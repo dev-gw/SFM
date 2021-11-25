@@ -49,7 +49,7 @@ You can initialize variables and change values in ShopFloor.py modules.
 I summarize the added parts of the object_tracker_SF.py   
 `line 105~120` - Initialize indicator variables   
 `line 122~123` - Connect GUI client   
-`line 197~218` - Edit some parts to calculate indicators for each class.   
+`line 197~218` - Calculate indicators for each class.   
 `line 239~242` - Draw start and end line   
 `line 251~256` - Set boundingbox color   
 `line 262~263` - Calculate the center point   
