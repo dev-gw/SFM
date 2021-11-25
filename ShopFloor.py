@@ -1,4 +1,6 @@
 import pymysql.cursors
+import socket
+import cv2
 
 # 서버 주소 설정
 HOST = '192.168.0.114'
@@ -8,7 +10,7 @@ PORT = 6666
 conn = pymysql.connect(
     host = 'localhost',
     user = 'root',
-    passwd = 'smartlab',
+    passwd = '********',
     db = 'shop_floor',
     charset='utf8'
 )
@@ -21,9 +23,14 @@ HEIGHT = 1080
 # start line 좌표
 start1 = (1713,385)
 start2 = (1813,385)
+
 # end line 좌표
 end1 = (915,800)
 end2 = (915,900)
+
+# Error zone 좌표 설정
+error1 = (1235,505)
+error2 = (1260,810)
 
 # GUI client setting
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -32,7 +39,11 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 basketball_color = (97,237,124)
 soccerball_color = (90, 160, 230)
 
-#지표 그리기
+# start,end line 그리기
+def draw_line(frame,first,second):
+    cv2.line(frame,first,second,(0,255,0),3)
+
+# 지표 그리기
 def indicator(frame, total_cycletime, basket_cycletime, soccer_cycletime, count, basketball_count, soccerball_count,
               in_count, basket_in, soccer_in, out_count, basket_out, soccer_out):
     cv2.putText(frame, "Cycletime: Total {} (sec)".format(total_cycletime), (20, 60), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2,

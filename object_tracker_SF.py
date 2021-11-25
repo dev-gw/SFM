@@ -20,6 +20,8 @@ from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 from datetime import datetime
 import pymysql.cursors
+import socket
+import time
 # deep sort imports
 from deep_sort import preprocessing, nn_matching
 from deep_sort.detection import Detection
@@ -41,8 +43,7 @@ flags.DEFINE_boolean('dont_show', False, 'dont show video output')
 flags.DEFINE_boolean('info', False, 'show detailed info of tracked objects')
 flags.DEFINE_boolean('count', False, 'count objects being tracked on screen')
 
-import socket
-import time
+
 
 def main(_argv):
     # Definition of the parameters
@@ -119,7 +120,7 @@ def main(_argv):
     in_count = out_count = th = warning1 = warning2 = basket_in = basket_out = soccer_in = soccer_out = 0
 
 ############# GUI connect ###########
-    client_socket.connect((HOST, PORT))
+    # client_socket.connect((HOST, PORT))
 
     frame_num = 0
     # while video is running
@@ -236,9 +237,9 @@ def main(_argv):
         tracker.update(detections)
 
         # draw start line
-        cv2.line(frame,start1,start2,(0,255,0),3)
+        draw_line(frame,start1,start2)
         # draw end line
-        cv2.line(frame,end1,end2,(0,255,0),3)
+        draw_line(frame,start1,start2)
 
         # update tracks
         for track in tracker.tracks:
@@ -263,7 +264,7 @@ def main(_argv):
 
             # DB insert
             tnow = datetime.today().strftime("%Y%m%d%H%M%S")
-            sql = "insert into ball(ID,x_coordinate,y_coordinate,frame,Date) values({0},{1},{2},{3},{4});".format(track.track_id, center_x, center_y, frame_num, tnow)
+            sql = "insert into ball(ID,x_coordinate,y_coordinate,type,frame,Date) values({0},{1},{2},{3},{4},{5});".format(track.track_id, center_x, center_y, '"'+class_name + '"', frame_num, tnow)
             cursor.execute(sql)
             conn.commit()
 
@@ -321,23 +322,23 @@ def main(_argv):
 
 
             # error zone 1
-            if (1235 < center_x < 1355) and (505 < center_y < 615):
-                cv2.rectangle(frame, (1235, 505), (1355, 615), (255, 0, 0), 3)
-                cv2.putText(frame, "ERROR", (1240, 635), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1.3, (255, 0, 0), 2)
+            if (error1[0] < center_x < error1[0]+120) and (error1[1] < center_y < error1[1]+110):
+                cv2.rectangle(frame, (error1[0], error1[1]), (error1[0]+120, error1[1]+110), (255, 0, 0), 3)
+                cv2.putText(frame, "ERROR1", (error1[0]+5, error1[1]+130), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1.3, (255, 0, 0), 2)
                 warning1 = 1
             else:
                 warning1 = 0
 
             # error zone 2
-            if (1260 < center_x < 1380) and (810 < center_y < 920):
-                cv2.rectangle(frame, (1260, 810), (1380, 920), (255,0,0), 3)
-                cv2.putText(frame, "ERROR", (1265, 940), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1.3, (255,0,0), 2)
+            if (error2[0] < center_x < error2[0]+120) and (error2[1] < center_y < error2[1]+110):
+                cv2.rectangle(frame, (error2[0], error2[1]), (error2[0]+120, error2[0]+110), (255,0,0), 3)
+                cv2.putText(frame, "ERROR2", (error2[0]+5, error2[1]+130), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1.3, (255,0,0), 2)
                 warning2 = 1
             else:
                 warning2 = 0
 
         #지표 그리기
-        ShopFloor.indicator(frame, total_cycletime, basket_cycletime, soccer_cycletime, count, basketball_count, soccerball_count,
+        indicator(frame, total_cycletime, basket_cycletime, soccer_cycletime, count, basketball_count, soccerball_count,
                             in_count, basket_in, soccer_in, out_count, basket_out, soccer_out)
 
 
@@ -354,10 +355,7 @@ def main(_argv):
         
         if not FLAGS.dont_show:
             cv2.imshow("Output Video", result)
-        
-        # if output flag is set, save video file
-        # if FLAGS.output:
-        #     out.write(result)
+
         if cv2.waitKey(1) & 0xFF == ord('q'): break
     cv2.destroyAllWindows()
 
