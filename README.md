@@ -41,5 +41,23 @@ python save_model.py --model yolov4
 python object_tracker_SF.py --video 1 --model yolov4
 ```  
 --video flag number can be differ.   
-It will be helpful if you refer to Yolov4-Deepsort repository's README.
+It will be helpful if you refer to Yolov4-Deepsort repository's README.   
+
+## Difference from the Original Code   
+You can initialize variables and change values in ShopFloor.py modules.   
+
+I summarize the added parts of the object_tracker_SF.py   
+`line 105~120` - Initialize indicator variables   
+`line 122~123` - Connect GUI client   
+`line 197~218` - Edit some parts to calculate indicators for each class.   
+`line 239~242` - Draw start and end line   
+`line 251~256` - Set boundingbox color   
+`line 262~263` - Calculate the center point   
+`line 265~269` - Send indicators to DB(Updating)   
+`line 271~281` - Track object through the start line   
+`line 284~301` - Check object through the end line and change variables   
+`line 303~315` - Calculate cycletime   
+`line 317~331` - Check Error point   
+`line 333~335` - Function that draws indicators   
+`line 341` - Send indicators to GUI
 
