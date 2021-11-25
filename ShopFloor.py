@@ -1,3 +1,5 @@
+import pymysql.cursors
+
 # 서버 주소 설정
 HOST = '192.168.0.114'
 PORT = 6666
@@ -53,7 +55,6 @@ def indicator(frame, total_cycletime, basket_cycletime, soccer_cycletime, count,
     cv2.putText(frame, "B: {} (ea)".format(basket_out), (150, 550), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
     cv2.putText(frame, "S: {} (ea)".format(soccer_out), (150, 590), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
 
-# 
 
 
 

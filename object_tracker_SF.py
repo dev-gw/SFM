@@ -25,6 +25,7 @@ from deep_sort import preprocessing, nn_matching
 from deep_sort.detection import Detection
 from deep_sort.tracker import Tracker
 from tools import generate_detections as gdet
+from ShopFloor import *
 flags.DEFINE_string('framework', 'tf', '(tf, tflite, trt')
 flags.DEFINE_string('weights', './checkpoints/yolov4-416',
                     'path to weights file')
@@ -42,20 +43,6 @@ flags.DEFINE_boolean('count', False, 'count objects being tracked on screen')
 
 import socket
 import time
-
-# 서버 주소 설정(완)
-# HOST = '192.168.0.114'
-# PORT = 6666
-
-# 데이터베이스 설정(완)
-conn = pymysql.connect(
-    host = 'localhost',
-    user = 'root',
-    passwd = 'smartlab',
-    db = 'shop_floor',
-    charset='utf8'
-)
-cursor = conn.cursor()
 
 def main(_argv):
     # Definition of the parameters
@@ -100,7 +87,7 @@ def main(_argv):
 
     out = None
 
-    # 비디오 해상도 설정(변수 바꿈)
+    # 비디오 해상도 설정
     vid.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
     vid.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
 
@@ -113,12 +100,6 @@ def main(_argv):
         codec = cv2.VideoWriter_fourcc(*FLAGS.output_format)
         out = cv2.VideoWriter(FLAGS.output, codec, fps, (width, height))
 
-    # start line(완)
-    start1 = (1713,385)
-    start2 = (1813,385)
-    # end line(완)
-    end1 = (915,800)
-    end2 = (915,900)
 
     # dictionary
     dictionary = {}
@@ -137,7 +118,7 @@ def main(_argv):
     global in_count, out_count, warning1, warning2, th, basket_in, basket_out, soccer_in, soccer_out
     in_count = out_count = th = warning1 = warning2 = basket_in = basket_out = soccer_in = soccer_out = 0
 
-############# GUI connect ###########(완)
+############# GUI connect ###########
     client_socket.connect((HOST, PORT))
 
     frame_num = 0
@@ -356,24 +337,11 @@ def main(_argv):
                 warning2 = 0
 
         #지표 그리기
-        cv2.putText(frame, "Cycletime: Total {} (sec)".format(total_cycletime),(20, 60), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
-        cv2.putText(frame, "B: Cycletime: {} (sec)".format(basket_cycletime), (150, 100), cv2.FONT_HERSHEY_COMPLEX_SMALL,2, (0, 255, 0), 2)
-        cv2.putText(frame, "S: Cycletime: {} (sec)".format(soccer_cycletime), (150, 140),cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
-        cv2.putText(frame, "WIP: Total {} (ea)".format(count), (25, 210), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
-        cv2.putText(frame, "B: {} (ea)".format(basketball_count), (147,250), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0,255,0), 2)
-        cv2.putText(frame, "S: {} (ea)".format(soccerball_count), (147, 290), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
-        cv2.putText(frame, "IN:  Total {} (ea)".format(in_count), (25, 360), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
-        cv2.putText(frame, "B: {} (ea)".format(basket_in), (142, 400), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
-        cv2.putText(frame, "S: {} (ea)".format(soccer_in), (142, 440), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0),2)
-        cv2.putText(frame, "OUT: Total {} (ea)".format(out_count), (16, 510), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
-        cv2.putText(frame, "B: {} (ea)".format(basket_out), (150, 550), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0),2)
-        cv2.putText(frame, "S: {} (ea)".format(soccer_out), (150, 590), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0),2)
-
+        ShopFloor.indicator(frame, total_cycletime, basket_cycletime, soccer_cycletime, count, basketball_count, soccerball_count,
+                            in_count, basket_in, soccer_in, out_count, basket_out, soccer_out)
 
 
        # send message to server
-        #message = "{} {} {} {} ".format(in_count, out_count, total_cycletime, count) # 공 구분하지 않을 때
-
         #message = "{} {} {} {} {} {} {} {} {} {} {} {} {} {} ".format(in_count, out_count, total_cycletime, count, warning1, warning2, basket_in, basket_out, basket_cycletime, basketball_count,soccer_in, soccer_out, soccer_cycletime, soccerball_count)
 
         #client_socket.send(message.encode())
