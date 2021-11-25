@@ -46,23 +46,16 @@ def draw_line(frame,first,second):
 # 지표 그리기
 def indicator(frame, total_cycletime, basket_cycletime, soccer_cycletime, count, basketball_count, soccerball_count,
               in_count, basket_in, soccer_in, out_count, basket_out, soccer_out):
-    cv2.putText(frame, "Cycletime: Total {} (sec)".format(total_cycletime), (20, 60), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2,
-                (0, 255, 0), 2)
-    cv2.putText(frame, "B: Cycletime: {} (sec)".format(basket_cycletime), (150, 100), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2,
-                (0, 255, 0), 2)
-    cv2.putText(frame, "S: Cycletime: {} (sec)".format(soccer_cycletime), (150, 140), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2,
-                (0, 255, 0), 2)
+    cv2.putText(frame, "Cycletime: Total {} (sec)".format(total_cycletime), (20, 60), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2,(0, 255, 0), 2)
+    cv2.putText(frame, "B: Cycletime: {} (sec)".format(basket_cycletime), (150, 100), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2,(0, 255, 0), 2)
+    cv2.putText(frame, "S: Cycletime: {} (sec)".format(soccer_cycletime), (150, 140), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2,(0, 255, 0), 2)
     cv2.putText(frame, "WIP: Total {} (ea)".format(count), (25, 210), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
-    cv2.putText(frame, "B: {} (ea)".format(basketball_count), (147, 250), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2,
-                (0, 255, 0), 2)
-    cv2.putText(frame, "S: {} (ea)".format(soccerball_count), (147, 290), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2,
-                (0, 255, 0), 2)
-    cv2.putText(frame, "IN:  Total {} (ea)".format(in_count), (25, 360), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0),
-                2)
+    cv2.putText(frame, "B: {} (ea)".format(basketball_count), (147, 250), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2,(0, 255, 0), 2)
+    cv2.putText(frame, "S: {} (ea)".format(soccerball_count), (147, 290), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2,(0, 255, 0), 2)
+    cv2.putText(frame, "IN:  Total {} (ea)".format(in_count), (25, 360), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0),2)
     cv2.putText(frame, "B: {} (ea)".format(basket_in), (142, 400), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
     cv2.putText(frame, "S: {} (ea)".format(soccer_in), (142, 440), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
-    cv2.putText(frame, "OUT: Total {} (ea)".format(out_count), (16, 510), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2,
-                (0, 255, 0), 2)
+    cv2.putText(frame, "OUT: Total {} (ea)".format(out_count), (16, 510), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2,(0, 255, 0), 2)
     cv2.putText(frame, "B: {} (ea)".format(basket_out), (150, 550), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
     cv2.putText(frame, "S: {} (ea)".format(soccer_out), (150, 590), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 255, 0), 2)
 
