@@ -43,11 +43,11 @@ flags.DEFINE_boolean('count', False, 'count objects being tracked on screen')
 import socket
 import time
 
-# 서버 주소 설정
+# 서버 주소 설정(완)
 # HOST = '192.168.0.114'
 # PORT = 6666
 
-# 데이터베이스 설정
+# 데이터베이스 설정(완)
 conn = pymysql.connect(
     host = 'localhost',
     user = 'root',
@@ -100,9 +100,9 @@ def main(_argv):
 
     out = None
 
-    # 비디오 해상도 설정
-    vid.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-    vid.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+    # 비디오 해상도 설정(변수 바꿈)
+    vid.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
+    vid.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
 
     # get video ready to save locally if flag is set
     if FLAGS.output:
@@ -113,10 +113,10 @@ def main(_argv):
         codec = cv2.VideoWriter_fourcc(*FLAGS.output_format)
         out = cv2.VideoWriter(FLAGS.output, codec, fps, (width, height))
 
-    # start line
+    # start line(완)
     start1 = (1713,385)
     start2 = (1813,385)
-    # end line
+    # end line(완)
     end1 = (915,800)
     end2 = (915,900)
 
@@ -128,28 +128,16 @@ def main(_argv):
     basket_cyclelist = []
     soccer_cyclelist = []
     global total_cycletime, basket_cycletime, soccer_cycletime
-    total_cycletime = 0
-    basket_cycletime = 0
-    soccer_cycletime = 0
+    total_cycletime = basket_cycletime = soccer_cycletime = 0
 
     # WIP list
     wiplist = []
 
     # 지표 변수 선언
     global in_count, out_count, warning1, warning2, th, basket_in, basket_out, soccer_in, soccer_out
-    in_count = 0
-    out_count = 0
-    th = 0
-    warning1 = 0
-    warning2 = 0
-    basket_in = 0
-    basket_out = 0
-    soccer_in = 0
-    soccer_out = 0
+    in_count = out_count = th = warning1 = warning2 = basket_in = basket_out = soccer_in = soccer_out = 0
 
-############# client setting ###########
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
+############# GUI connect ###########(완)
     client_socket.connect((HOST, PORT))
 
     frame_num = 0
@@ -164,9 +152,6 @@ def main(_argv):
             break
         frame_num +=1
         print('Frame #: ', frame_num)
-        ## 로그 출력할 때
-        # with open('Tracker_log.txt', 'a') as f:
-        #     f.write('Frame : {}'.format(frame_num)+"\n")
         frame_size = frame.shape[:2]
         image_data = cv2.resize(frame, (input_size, input_size))
         image_data = image_data / 255.
@@ -245,7 +230,7 @@ def main(_argv):
             else:
                 names.append(class_name)
         names = np.array(names)
-        # WIP 공별 구분
+        # WIP 제품별 구분
         basketball_count = len(np.array(basketball))
         soccerball_count = len(np.array(soccerball))
         count = len(names)
@@ -284,9 +269,9 @@ def main(_argv):
         # draw bbox on screen
             # 공에 따라 색깔 구분
             if class_name == "B":
-                color = (97,237,124)
+                color = (basketball_color)
             else:
-                color = (90, 160, 230)
+                color = (soccerball_color)
 
             cv2.rectangle(frame, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), color, 2)
             cv2.rectangle(frame, (int(bbox[0]), int(bbox[1]-30)), (int(bbox[0])+(len(class_name)+len(str(track.track_id)))*21, int(bbox[1])), color, -1)
