@@ -282,7 +282,6 @@ def main(_argv):
 
 
             # end line 추적
-
             if (end1[0] - 7 <= center_x <= end1[0] + 5) and (end1[1] <= center_y <= end2[1]):
                 if (class_name + "-" + str(track.track_id)) in wiplist:
                     wiplist.remove(class_name + "-" + str(track.track_id))
@@ -304,22 +303,16 @@ def main(_argv):
             # calculate cycletime
             if len(cyclelist) == 0:
                 total_cycletime = 0
-
             else:
                 total_cycletime = round((sum(cyclelist) / len(cyclelist)), 3)
-
             if len(basket_cyclelist) == 0:
                 basket_cycletime = 0
-
             else:
                 basket_cycletime = round((sum(basket_cyclelist) / len(basket_cyclelist)), 3)
-
             if len(soccer_cyclelist) == 0:
                 soccer_cycletime = 0
-
             else:
                 soccer_cycletime = round((sum(soccer_cyclelist) / len(soccer_cyclelist)), 3)
-
 
             # error zone 1
             if (error1[0] < center_x < error1[0]+120) and (error1[1] < center_y < error1[1]+110):
