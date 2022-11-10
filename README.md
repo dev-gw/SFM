@@ -27,7 +27,7 @@ pip install -r requirements-gpu.txt
 ```   
 
 ## Downloading Pre-trained Weights(Custom object)
-[yolov4.weights](https://drive.google.com/file/d/1pVvB2SQoSqM3zq2s_xUmbke-1G7OR5iD/view?usp=sharing)   
+[yolov4.weights](https://drive.google.com/file/d/1sLw6H6VzI1f954094WwqBwGZ1nPViVwc/view?usp=share_link)   
 Copy and paste yolov4.weights from your downloads folder into the 'data' folder of Yolov4 repository.
 
 ## Running the Tracker with YOLOv4-DeepSort
